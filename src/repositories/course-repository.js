@@ -1,5 +1,5 @@
 export class ICourseRepository {
-  findMany() {
+  async findMany() {
     throw new Error("Method 'findMany' must be implemented.");
   }
 }
