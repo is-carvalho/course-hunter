@@ -17,13 +17,19 @@ const buildQueryToCourse = (courseName) => {
   params.append("num", String(SEARCH_PARAMETERS.num));
   params.append("q", courseName);
 
-  return `${URL_BASE}?${params.toString()}`;
+  const query = `${URL_BASE}?${params.toString()}`;
+
+  return {
+    query,
+    params,
+  };
 };
 
-export const getQueriesToCourses = (courses) => {
-  const queries = courses.map((course) => {
-    return buildQueryToCourse(course);
-  });
+export const getQueriesToCourses = (course) => {
+  const { query, params } = buildQueryToCourse(course);
 
-  return courses.map((course) => buildQueryToCourse(course));
+  return {
+    query,
+    params,
+  };
 };

@@ -14,10 +14,18 @@ export class QueryGenerator {
         throw new Error("courses repository is empty");
       }
 
-      const queries = courses.map((course) => {
-        getQueriesToCourses(course.specialization_course_name);
+      const course_queries = courses.map((course) => {
+        const { query, params } = getQueriesToCourses(
+          course.specialization_course_name,
+        );
+
+        return {
+          course: course.specialization_course_name,
+          query,
+          params,
+        };
       });
-      return { queries };
+      return { course_queries };
     }
   }
 }
