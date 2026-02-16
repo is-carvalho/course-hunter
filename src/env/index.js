@@ -10,6 +10,7 @@ const envSchema = z.object({
   CUSTOM_SEARCH_API_URL: z.string(),
   CUSTOM_SEARCH_API_KEY: z.string(),
   CUSTOM_SEARCH_API_SEARCH_ENGINE: z.string(),
+  GEMINI_API_KEY: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);
