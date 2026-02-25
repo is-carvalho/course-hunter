@@ -10,7 +10,7 @@ export class GeminiProvider {
   async generateJSON(promptText) {
     try {
       const result = await this.model.generateContent(promptText);
-      const response = await result.response;
+      const response = result.response;
       let textResponse = response.text();
 
       textResponse = textResponse

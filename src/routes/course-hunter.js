@@ -3,6 +3,6 @@ import { searchCourses } from "../controllers/course-hunter-controller.js";
 
 const router = express.Router();
 
-router.post("/search", searchCourses);
+router.get("/search", searchCourses);
 
 export default router;

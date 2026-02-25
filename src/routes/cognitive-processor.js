@@ -3,6 +3,6 @@ import { extractCourse } from "../controllers/cognitive-processor-controller.js"
 
 const router = express.Router();
 
-router.post("/extract", extractCourse);
+router.get("/extract", extractCourse);
 
 export default router;

@@ -5,10 +5,17 @@ import GeminiProvider from "./gemini-provider.js";
 import { COURSE_ANALYSIS_PROMPT } from "../constants/extraction-prompts.js";
 
 export class CourseExtractor {
+  #ScrepedPageRepository;
+  #AiExtractionRepository;
+  constructor(ScrepedPageRepository, AiExtractionRepository) {
+    this.#ScrepedPageRepository = ScrepedPageRepository;
+    this.#AiExtractionRepository = AiExtractionRepository;
+  }
+
   async _scrapeText(url) {
     let driver = await new Builder().forBrowser("chrome").build();
     try {
-      console.log(`[Selenium] Acessando: ${url}`);
+      console.log(`[Selenium] Acessing: ${url}`);
       await driver.get(url);
 
       await driver.wait(until.elementLocated(By.tagName("body")), 10000);
@@ -50,14 +57,36 @@ export class CourseExtractor {
     console.log(`[Persistência] Dados salvos em ${filePath}`);
   }
 
-  async executePipeline(urls) {
+  /**
+   * @param {Array<{ url: string, searchContextId?: string, courseId?: string }>} urlObjects
+   * urlObjects: [{ url, searchContextId, courseId }]
+   */
+  async executePipeline(urlObjects) {
     const results = [];
 
-    for (const url of urls) {
+    for (const { url, searchContextId, courseId } of urlObjects) {
       const rawText = await this._scrapeText(url);
 
       if (!rawText) {
-        console.warn(`[Skip] Falha ao ler ${url}`);
+        console.warn(`[Skip] Fail to read ${url}`);
+        continue;
+      }
+
+      // Persist raw scraped page
+      let scrapedPageDoc;
+      try {
+        scrapedPageDoc = await this.#ScrepedPageRepository.create({
+          searchContextId: searchContextId || undefined,
+          url,
+          rawContent: rawText,
+          status: "SUCCESS",
+        });
+        console.log(`[DB] ScrapedPage saved for ${url}`);
+      } catch (err) {
+        console.error(
+          `[DB] Failed to save ScrapedPage for ${url}:`,
+          err.message,
+        );
         continue;
       }
 
@@ -66,10 +95,25 @@ export class CourseExtractor {
         rawText,
       );
 
-      console.log(`[AI] Analisando dados de: ${url}...`);
+      console.log(`[AI] Analyzing data from: ${url}...`);
       const structuredData = await GeminiProvider.generateJSON(finalPrompt);
 
       if (structuredData) {
+        // Persist AI extraction
+        try {
+          await this.#AiExtractionRepository.create({
+            scrapedPageId: scrapedPageDoc._id,
+            courseId: courseId || undefined,
+            extractedData: structuredData,
+            curationStatus: "PENDING_REVIEW",
+          });
+          console.log(`[DB] AiExtraction saved for ${url}`);
+        } catch (err) {
+          console.error(
+            `[DB] Failed to save AiExtraction for ${url}:`,
+            err.message,
+          );
+        }
         results.push({
           url: url,
           ...structuredData,
@@ -77,12 +121,6 @@ export class CourseExtractor {
       }
     }
 
-    if (results.length > 0) {
-      await this._persistResults(results);
-    }
-
     return results;
   }
 }
-
-export default new CourseExtractor();
