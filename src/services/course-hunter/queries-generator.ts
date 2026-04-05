@@ -1,8 +1,14 @@
 import { getQueriesToCourses } from "./helpers/queries-build.js";
 
+export type CourseQuery = {
+  course: string;
+  query: string;
+  params: URLSearchParams;
+};
+
 export class QueryGenerator {
   #courseRepository;
-  constructor(courseRepository) {
+  constructor(courseRepository: any) {
     this.#courseRepository = courseRepository;
   }
 
@@ -14,7 +20,7 @@ export class QueryGenerator {
         throw new Error("courses repository is empty");
       }
 
-      const course_queries = courses.map((course) => {
+      const course_queries: CourseQuery[] = courses.map((course: any) => {
         const { query, params } = getQueriesToCourses(
           course.specialization_course_name,
         );

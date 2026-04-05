@@ -6,7 +6,7 @@ const SEARCH_PARAMETERS = Object.freeze({
   num: 10,
 });
 
-const buildQueryToCourse = (courseName) => {
+const buildQueryToCourse = (courseName: string) => {
   const params = new URLSearchParams();
   const URL_BASE = env.CUSTOM_SEARCH_API_URL;
 
@@ -25,7 +25,7 @@ const buildQueryToCourse = (courseName) => {
   };
 };
 
-export const getQueriesToCourses = (course) => {
+export const getQueriesToCourses = (course: string) => {
   const { query, params } = buildQueryToCourse(course);
 
   return {

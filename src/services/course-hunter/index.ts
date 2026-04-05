@@ -34,7 +34,7 @@ export class DataProcessingPipeLine {
         savedContexts: totalSearches,
         summary,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Error in DataProcessingPipeLine:", error.message);
       throw error;
     }

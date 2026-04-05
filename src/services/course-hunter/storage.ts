@@ -1,13 +1,15 @@
+import type { PromiseResults, SearchResults } from "./search-engine.js";
+
 export class SearchResultProcessor {
   #searchResults;
   #contextRepository;
 
-  constructor(searchResults, contextRepository) {
+  constructor(searchResults: PromiseResults, contextRepository: any) {
     this.#searchResults = searchResults;
     this.#contextRepository = contextRepository;
   }
 
-  async #processSingleResult(result) {
+  async #processSingleResult(result: PromiseResults[number]) {
     if (result.status === "fulfilled") {
       const { value } = result;
       const searchContextData = {
@@ -25,18 +27,18 @@ export class SearchResultProcessor {
   }
 
   async execute() {
-    const savePromises = this.#searchResults.map((result) =>
-      this.#processSingleResult(result),
+    const savePromises = this.#searchResults.map(
+      (result: PromiseResults[number]) => this.#processSingleResult(result),
     );
 
     const processResults = await Promise.all(savePromises);
 
     // Conta sucessos e falhas
     const successCount = processResults.filter(
-      (r) => r.status === "success",
+      (r) => r?.status === "success",
     ).length;
     const failureCount = processResults.filter(
-      (r) => r.status === "failed",
+      (r) => r?.status === "failed",
     ).length;
 
     console.log(
