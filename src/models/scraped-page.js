@@ -2,11 +2,33 @@ import { mongoose } from "../config/database.js";
 const { Schema } = mongoose;
 
 const ScrapedPageSchema = new Schema({
-  // Reference to search context and its specific link
+
+  // Referência ao contexto de busca de origem
   searchContextId: {
     type: Schema.Types.ObjectId,
     ref: "SearchContext",
     required: true,
+  },
+
+  // Índice do item em searchContext.searchResult.items que originou esta raspagem
+  searchContextItemIndex: {
+    type: Number,
+    required: true,
+    description: "Índice do item em searchResult.items do SearchContext que originou esta página raspada",
+  },
+
+  // Referência direta ao curso relacionado (opcional, para facilitar tracking)
+  courseId: {
+    type: Schema.Types.ObjectId,
+    ref: "Course",
+    required: false,
+  },
+
+  // Referência à extração de IA (opcional)
+  aiExtractionId: {
+    type: Schema.Types.ObjectId,
+    ref: "AiExtraction",
+    required: false,
   },
 
   // A URL específica que foi raspada

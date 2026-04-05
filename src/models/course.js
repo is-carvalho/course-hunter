@@ -1,6 +1,7 @@
 import { mongoose } from "../config/database.js";
 const { Schema } = mongoose;
 
+
 const CourseSchema = new Schema(
   {
     ies_code: { type: Number, required: true },
@@ -15,6 +16,18 @@ const CourseSchema = new Schema(
     location: { type: String, required: true },
     spots: { type: Number, required: false },
     start_date: { type: Date, required: false },
+
+    // Relacionamento com SearchContexts
+    searchContexts: [{
+      type: Schema.Types.ObjectId,
+      ref: "SearchContext",
+    }],
+
+    // Relacionamento com ScrapedPages
+    scrapedPages: [{
+      type: Schema.Types.ObjectId,
+      ref: "ScrapedPage",
+    }],
   },
   {
     collection: "course",

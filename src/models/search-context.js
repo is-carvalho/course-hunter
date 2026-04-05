@@ -10,6 +10,13 @@ const SearchContextSchema = new Schema({
     description: "Course name extracted from public IES base",
   },
 
+  // Referência ao curso de origem
+  courseId: {
+    type: Schema.Types.ObjectId,
+    ref: "Course",
+    required: true,
+  },
+
   // 2. Optimized Query
   // Here you can save final string with injected sufix ("Federal", "Grátis", etc.)
   constructedQuery: {
@@ -31,6 +38,14 @@ const SearchContextSchema = new Schema({
       },
     ],
   },
+
+  // Referência às páginas raspadas relacionadas a este contexto
+  scrapedPages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "ScrapedPage",
+    },
+  ],
 
   // 5. Relevance flag (post-processing)
   status: {

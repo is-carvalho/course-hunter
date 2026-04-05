@@ -1,18 +1,20 @@
 import { mongoose } from "../config/database.js";
 const { Schema } = mongoose;
 
+
 const AiExtractionSchema = new Schema({
-  // Reference to raw data readed by gemini
+  // Referência à página raspada de origem
   scrapedPageId: {
     type: Schema.Types.ObjectId,
     ref: "ScrapedPage",
     required: true,
   },
 
-  // Reference to original course from e-MEC base (optional, maybe util to reports ????)
+  // Referência ao curso de origem
   courseId: {
     type: Schema.Types.ObjectId,
     ref: "Course",
+    required: false,
   },
 
   // Semantic data Extracted by AI
